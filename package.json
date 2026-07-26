@@ -1,7 +1,7 @@
 {
   "name": "chat-reaction",
   "productName": "ChatReaction",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "App para añadir reacciones (imagen + audio) y asociar un trigger de chat.",
   "main": "main.js",
   "scripts": {
