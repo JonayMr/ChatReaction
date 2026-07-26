@@ -1,0 +1,52 @@
+{
+  "name": "chat-reaction",
+  "productName": "ChatReaction",
+  "version": "1.0.0",
+  "description": "App para añadir reacciones (imagen + audio) y asociar un trigger de chat.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --publish=never && npm run release:bundle",
+    "dist:linux": "electron-builder --linux AppImage --publish=never && npm run release:bundle",
+    "dist:win": "electron-builder --win portable --publish=never && npm run release:bundle",
+    "dist:mac": "electron-builder --mac zip --publish=never && npm run release:bundle",
+    "release:bundle": "node scripts/assemble-release.js"
+  },
+  "devDependencies": {
+    "electron": "^26.6.10",
+    "electron-builder": "^24.6.0"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "tmi.js": "^1.8.5",
+    "ws": "^8.13.0"
+  },
+  "build": {
+    "appId": "com.example.chatreaction",
+    "productName": "ChatReaction",
+    "files": [
+      "**/*",
+      "!node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}"
+    ],
+    "directories": {
+      "buildResources": "build"
+    },
+    "mac": {
+      "target": [
+        "zip"
+      ]
+    },
+    "win": {
+      "signAndEditExecutable": false,
+      "target": [
+        "portable"
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "zip"
+      ]
+    }
+  }
+}

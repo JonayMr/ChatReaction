@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>ChatReaction Overlay</title>
+  <style>
+    body { margin: 0; overflow: hidden; background: transparent; font-family: Arial, sans-serif; }
+    #image {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) translateX(0);
+      display: none;
+      width: auto;
+      max-width: 90vw;
+      max-height: 90vh;
+      will-change: transform, opacity;
+    }
+    @keyframes bounceInRight {
+      0% { transform: translate(-50%, -50%) translateX(100vw); }
+      60% { transform: translate(-50%, -50%) translateX(-10px); }
+      100% { transform: translate(-50%, -50%) translateX(0); }
+    }
+    @keyframes bounceOutRight {
+      0% { transform: translate(-50%, -50%) translateX(0); }
+      50% { transform: translate(-50%, -50%) translateX(20px); }
+      100% { transform: translate(-50%, -50%) translateX(100vw); }
+    }
+    @keyframes bounceInLeft {
+      0% { transform: translate(-50%, -50%) translateX(-100vw); }
+      60% { transform: translate(-50%, -50%) translateX(10px); }
+      100% { transform: translate(-50%, -50%) translateX(0); }
+    }
+    @keyframes bounceOutLeft {
+      0% { transform: translate(-50%, -50%) translateX(0); }
+      50% { transform: translate(-50%, -50%) translateX(-20px); }
+      100% { transform: translate(-50%, -50%) translateX(-100vw); }
+    }
+    @keyframes bounceInTop {
+      0% { transform: translate(-50%, -50%) translateY(-100vh); }
+      60% { transform: translate(-50%, -50%) translateY(10px); }
+      100% { transform: translate(-50%, -50%) translateY(0); }
+    }
+    @keyframes bounceOutTop {
+      0% { transform: translate(-50%, -50%) translateY(0); }
+      50% { transform: translate(-50%, -50%) translateY(-20px); }
+      100% { transform: translate(-50%, -50%) translateY(-100vh); }
+    }
+    @keyframes bounceInBottom {
+      0% { transform: translate(-50%, -50%) translateY(100vh); }
+      60% { transform: translate(-50%, -50%) translateY(-10px); }
+      100% { transform: translate(-50%, -50%) translateY(0); }
+    }
+    @keyframes bounceOutBottom {
+      0% { transform: translate(-50%, -50%) translateY(0); }
+      50% { transform: translate(-50%, -50%) translateY(20px); }
+      100% { transform: translate(-50%, -50%) translateY(100vh); }
+    }
+    .bounce-in-right { animation: bounceInRight 0.5s ease both; }
+    .bounce-out-right { animation: bounceOutRight 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    .bounce-in-left { animation: bounceInLeft 0.5s ease both; }
+    .bounce-out-left { animation: bounceOutLeft 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    .bounce-in-top { animation: bounceInTop 0.5s ease both; }
+    .bounce-out-top { animation: bounceOutTop 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    .bounce-in-bottom { animation: bounceInBottom 0.5s ease both; }
+    .bounce-out-bottom { animation: bounceOutBottom 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
+  </style>
+</head>
+<body>
+  <img id="image" alt="reaction image">
+  <audio id="sound"></audio>
+
+  <script src="overlay-config.js"></script>
+  <script>
+    let combos = {};
+    let cooldownUntil = {};
+    let ws = null;
+    let reconnectTimer = null;
+    let configuredReactions = 0;
+    let seenMessages = 0;
+    let firedReactions = 0;
+    let stateText = 'init';
+    const TRIGGER_COOLDOWN_MS = 15000;
+
+    const imageEl = document.getElementById('image');
+    const audioEl = document.getElementById('sound');
+    let exitTimer = null;
+    let audioStopTimer = null;
+    let activeReaction = null;
+    let reactionQueue = [];
+    let isExiting = false;
+
+    function normalizeDirection(dir) {
+      const d = String(dir || '').toLowerCase();
+      return (d === 'left' || d === 'top' || d === 'bottom') ? d : 'right';
+    }
+
+    function clearDirectionClasses() {
+      imageEl.classList.remove(
+        'bounce-in-right', 'bounce-out-right',
+        'bounce-in-left', 'bounce-out-left',
+        'bounce-in-top', 'bounce-out-top',
+        'bounce-in-bottom', 'bounce-out-bottom'
+      );
+    }
+
+    function setStatus(text) {
+      stateText = text;
+      console.log('[Overlay]', `${stateText} | cfg:${configuredReactions} | chat:${seenMessages} | fires:${firedReactions}`);
+    }
+
+    function getConfig() {
+      return window.CHAT_REACTION_CONFIG || null;
+    }
+
+    function playReaction(obj, globalVolume, globalDirection) {
+      if (!obj) return;
+      reactionQueue.push({ obj, globalVolume, globalDirection });
+      processReactionQueue();
+    }
+
+    function processReactionQueue() {
+      if (activeReaction || isExiting) return;
+      const next = reactionQueue.shift();
+      if (!next) return;
+
+      const { obj, globalVolume, globalDirection } = next;
+      activeReaction = next;
+      if (!obj) return;
+      firedReactions += 1;
+      setStatus(stateText);
+
+      const targetWidth = Number.isFinite(Number(obj.imageWidth)) && Number(obj.imageWidth) > 0
+        ? Math.round(Number(obj.imageWidth))
+        : (Number.isFinite(Number(obj.imageHeight)) && Number(obj.imageHeight) > 0
+          ? Math.round(Number(obj.imageHeight))
+          : 256);
+      imageEl.style.width = `${targetWidth}px`;
+      imageEl.style.height = 'auto';
+
+      if (exitTimer) clearTimeout(exitTimer);
+      if (audioStopTimer) clearTimeout(audioStopTimer);
+      exitTimer = null;
+      audioStopTimer = null;
+
+      const volume = (obj.volume !== undefined ? Number(obj.volume) : Number(globalVolume || 1));
+      const direction = normalizeDirection(globalDirection || obj.direction);
+      const inClass = 'bounce-in-' + direction;
+      const outClass = 'bounce-out-' + direction;
+
+      if (obj.imageData) imageEl.src = obj.imageData;
+      imageEl.style.display = 'block';
+      clearDirectionClasses();
+      imageEl.style.animation = 'none';
+      void imageEl.offsetHeight;
+      imageEl.style.animation = '';
+      requestAnimationFrame(() => {
+        imageEl.classList.add(inClass);
+      });
+      imageEl.onerror = () => { imageEl.style.display = 'none'; };
+
+      if (obj.audioData) audioEl.src = obj.audioData;
+      audioEl.volume = Number.isFinite(volume) ? Math.max(0, Math.min(1, volume)) : 1;
+      audioEl.loop = false;
+      audioEl.pause();
+      audioEl.currentTime = 0;
+      audioEl.load();
+      audioEl.play().catch(() => {});
+
+      exitTimer = setTimeout(() => {
+        isExiting = true;
+        clearDirectionClasses();
+        imageEl.classList.add(outClass);
+        imageEl.addEventListener('animationend', () => {
+          imageEl.style.display = 'none';
+          clearDirectionClasses();
+          isExiting = false;
+          activeReaction = null;
+          processReactionQueue();
+        }, { once: true });
+      }, 2500);
+
+      audioStopTimer = setTimeout(() => {
+        audioEl.pause();
+        audioEl.currentTime = 0;
+      }, 3200);
+    }
+
+    function parsePrivmsg(line) {
+      const cleaned = line.startsWith('@') ? line.slice(line.indexOf(' ') + 1) : line;
+      const m = cleaned.match(/^:([^!]+)![^ ]+ PRIVMSG #[^ ]+ :(.*)$/);
+      if (!m) return null;
+      return { user: m[1], message: m[2] || '' };
+    }
+
+    function processChatMessage(message, reactions, globalVolume, globalDirection) {
+      const msg = String(message || '').trim().toLowerCase();
+      const now = Date.now();
+
+      for (const r of reactions) {
+        if (!r || !r.trigger) continue;
+        const trigger = String(r.trigger).trim().toLowerCase();
+        if (!trigger) continue;
+        if (msg !== trigger) continue;
+
+        if (cooldownUntil[trigger] && cooldownUntil[trigger] > now) {
+          combos[trigger] = 0;
+          continue;
+        }
+
+        combos[trigger] = (combos[trigger] || 0) + 1;
+        const required = r.threshold !== undefined ? Number(r.threshold) : 1;
+        const needed = Number.isFinite(required) && required > 0 ? required : 1;
+        if (combos[trigger] >= needed) {
+          combos[trigger] = 0;
+          cooldownUntil[trigger] = now + TRIGGER_COOLDOWN_MS;
+          playReaction(r, globalVolume, globalDirection);
+        }
+      }
+    }
+
+    function connectIrc() {
+      const cfg = getConfig();
+      if (!cfg || !cfg.twitch || !cfg.twitch.channel) {
+        setStatus('ERROR: falta canal en overlay-config.js');
+        return;
+      }
+
+      const reactions = Array.isArray(cfg.reactions) ? cfg.reactions : [];
+      configuredReactions = reactions.length;
+      const globalVolume = cfg.globalVolume !== undefined ? cfg.globalVolume : 1;
+      const globalDirection = normalizeDirection(cfg.animationDirection);
+      const channel = String(cfg.twitch.channel).replace('#', '').toLowerCase();
+      const token = String(cfg.twitch.token || '').trim();
+      const usingAuth = token.length > 0;
+      // Twitch anonymous IRC must use a justinfan nick.
+      const nick = usingAuth
+        ? (String(cfg.twitch.bot || '').trim() || ('chatreaction' + Math.floor(Math.random() * 100000)))
+        : ('justinfan' + Math.floor(Math.random() * 100000));
+
+      setStatus('Conectando IRC Twitch...');
+      ws = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
+
+      ws.onopen = () => {
+        ws.send('CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership');
+        if (usingAuth) {
+          const pass = token.startsWith('oauth:') ? token : ('oauth:' + token);
+          ws.send('PASS ' + pass);
+        } else {
+          ws.send('PASS SCHMOOPIIE');
+        }
+        ws.send('NICK ' + nick);
+        ws.send('JOIN #' + channel);
+        setStatus('Socket abierto (' + (usingAuth ? 'auth' : 'anon') + '), uniendo a #' + channel + '...');
+      };
+
+      ws.onmessage = (ev) => {
+        const raw = String(ev.data || '');
+        const lines = raw.split('\r\n').filter(Boolean);
+        for (const line of lines) {
+          if (line.startsWith('PING ')) {
+            ws.send(line.replace('PING', 'PONG'));
+            continue;
+          }
+
+          if (line.includes(' 001 ')) {
+            setStatus('Login IRC OK');
+          }
+
+          if (line.includes('Login authentication failed')) {
+            setStatus('ERROR auth Twitch (token/bot)');
+          }
+
+          if (line.includes('NOTICE *')) {
+            setStatus('NOTICE IRC: ' + line.slice(0, 120));
+          }
+
+          if (line.includes(` JOIN #${channel.toLowerCase()}`) || line.includes(` JOIN #${channel}`)) {
+            setStatus('Conectado a #' + channel);
+          }
+
+          const msg = parsePrivmsg(line);
+          if (msg) {
+            seenMessages += 1;
+            setStatus(stateText);
+            processChatMessage(msg.message, reactions, globalVolume, globalDirection);
+          }
+        }
+      };
+
+      ws.onerror = () => {
+        setStatus('ERROR WS Twitch');
+      };
+
+      ws.onclose = (ev) => {
+        setStatus('Desconectado (' + ev.code + '), reintentando...');
+        if (reconnectTimer) clearTimeout(reconnectTimer);
+        reconnectTimer = setTimeout(connectIrc, 3000);
+      };
+    }
+
+    connectIrc();
+  </script>
+</body>
+</html>
