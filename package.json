@@ -26,7 +26,12 @@
     "productName": "ChatReaction",
     "files": [
       "**/*",
-      "!node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}"
+      "!node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}",
+      "!release/**",
+      "!dist/**",
+      "!data/**",
+      "!docs/**",
+      "!scripts/**"
     ],
     "directories": {
       "buildResources": "build"
