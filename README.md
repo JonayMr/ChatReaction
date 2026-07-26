@@ -2,6 +2,10 @@
 
 ChatReaction is an Electron desktop app that lets you create custom stream reactions (image + audio) and trigger them from Twitch chat.
 
+## Interface Preview
+
+![ChatReaction interface preview](docs/interface-preview.svg)
+
 ## Features
 
 - Clean visual editor for reaction setup.

@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="760" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2B2B2B"/>
+      <stop offset="1" stop-color="#171717"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#2E2E2E" stop-opacity="0.96"/>
+      <stop offset="1" stop-color="#262626" stop-opacity="0.96"/>
+    </linearGradient>
+    <linearGradient id="danger" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#FF6978"/>
+      <stop offset="1" stop-color="#FF4D61"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#D6DEE7"/>
+      <stop offset="1" stop-color="#B6C1CD"/>
+    </linearGradient>
+    <filter id="shadow" x="0" y="0" width="1200" height="760" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="20" stdDeviation="24" flood-color="#000" flood-opacity="0.28"/>
+    </filter>
+    <style>
+      .title { font: 700 30px 'Segoe UI', Arial, sans-serif; fill: #F4F4F4; }
+      .subtitle { font: 600 12px 'Segoe UI', Arial, sans-serif; fill: #9A9A9A; letter-spacing: 2px; }
+      .eyebrow { font: 600 11px 'Segoe UI', Arial, sans-serif; fill: #9C9C9C; letter-spacing: 1px; }
+      .heading { font: 700 18px 'Segoe UI', Arial, sans-serif; fill: #EFEFEF; }
+      .body { font: 500 13px 'Segoe UI', Arial, sans-serif; fill: #B4B4B4; }
+      .small { font: 500 12px 'Segoe UI', Arial, sans-serif; fill: #8D8D8D; }
+      .buttonText { font: 700 13px 'Segoe UI', Arial, sans-serif; fill: #262626; }
+      .buttonDanger { font: 700 13px 'Segoe UI', Arial, sans-serif; fill: #FFF; }
+      .inputText { font: 500 14px 'Segoe UI', Arial, sans-serif; fill: #D8D8D8; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="760" rx="28" fill="url(#bg)"/>
+
+  <text x="600" y="58" text-anchor="middle" class="title">ChatReaction</text>
+  <text x="600" y="82" text-anchor="middle" class="subtitle">BY SRJY_</text>
+
+  <g filter="url(#shadow)">
+    <rect x="26" y="105" width="590" height="325" rx="18" fill="url(#card)" stroke="#494949"/>
+    <rect x="642" y="105" width="532" height="230" rx="18" fill="url(#card)" stroke="#494949"/>
+    <rect x="26" y="452" width="590" height="275" rx="18" fill="url(#card)" stroke="#494949"/>
+    <rect x="642" y="356" width="532" height="371" rx="18" fill="url(#card)" stroke="#494949"/>
+  </g>
+
+  <rect x="877" y="35" width="297" height="38" rx="19" fill="#303030" stroke="#565656"/>
+  <circle cx="901" cy="54" r="8" fill="#454545" stroke="#7C7C7C"/>
+  <text x="921" y="59" class="eyebrow" fill="#E4E4E4">SUPPORT THE DEVELOPER WITH A SUB</text>
+
+  <text x="46" y="134" class="eyebrow">TWITCH</text>
+  <text x="46" y="163" class="heading">Twitch settings</text>
+  <text x="46" y="200" class="body">Channel</text>
+  <rect x="46" y="214" width="540" height="38" rx="8" fill="#1D1D1D" stroke="#565656"/>
+  <text x="58" y="239" class="inputText">SrJy_</text>
+  <text x="46" y="273" class="small">Input your Twitch channel name to connect the overlay.</text>
+  <text x="46" y="315" class="body">Global animation direction</text>
+  <rect x="46" y="329" width="540" height="38" rx="8" fill="#1D1D1D" stroke="#565656"/>
+  <text x="58" y="354" class="inputText">Top</text>
+  <path d="M571 345l7 8 7-8" stroke="#CFCFCF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="46" y="388" width="136" height="42" rx="10" fill="url(#accent)"/>
+  <text x="114" y="414" text-anchor="middle" class="buttonText">Save Twitch settings</text>
+  <text x="202" y="414" class="small">Reaction saved and exported.</text>
+
+  <text x="662" y="134" class="eyebrow">OUTPUT</text>
+  <text x="662" y="163" class="heading">Global volume</text>
+  <text x="662" y="186" class="body">Adjust the global volume for all reactions.</text>
+  <text x="1128" y="186" class="small">32%</text>
+  <rect x="669" y="244" width="480" height="6" rx="3" fill="#B8B8B8"/>
+  <circle cx="827" cy="247" r="10" fill="#1F1F1F" stroke="#E0E0E0" stroke-width="3"/>
+  <rect x="662" y="278" width="128" height="42" rx="10" fill="url(#accent)"/>
+  <text x="726" y="304" text-anchor="middle" class="buttonText">Apply volume</text>
+  <text x="808" y="304" class="small">Volume applied successfully.</text>
+
+  <text x="46" y="481" class="eyebrow">REACTIONS</text>
+  <text x="46" y="510" class="heading">Create or edit a reaction</text>
+  <text x="46" y="554" class="body">Trigger / Name / Emote</text>
+  <rect x="46" y="568" width="540" height="38" rx="8" fill="#1D1D1D" stroke="#565656"/>
+  <text x="58" y="593" class="small">e.g. pogChamp</text>
+  <text x="46" y="642" class="body">Image (PNG, GIF, or WebP)</text>
+  <text x="326" y="642" class="body">Audio (MP3)</text>
+  <rect x="46" y="667" width="95" height="42" rx="10" fill="url(#accent)"/>
+  <rect x="326" y="667" width="116" height="42" rx="10" fill="url(#accent)"/>
+  <text x="93.5" y="693" text-anchor="middle" class="buttonText">Choose image</text>
+  <text x="384" y="693" text-anchor="middle" class="buttonText">Choose audio</text>
+
+  <text x="662" y="385" class="eyebrow">LIBRARY</text>
+  <text x="662" y="414" class="heading">Reaction list</text>
+  <text x="662" y="437" class="body">Edit or delete your saved triggers.</text>
+
+  <g>
+    <rect x="662" y="468" width="490" height="74" rx="10" fill="#292929" stroke="#343434"/>
+    <rect x="676" y="485" width="66" height="39" rx="8" fill="#182954"/>
+    <rect x="682" y="491" width="54" height="27" rx="6" fill="#141414"/>
+    <text x="756" y="499" class="heading" style="font-size:15px">goodTake</text>
+    <text x="756" y="521" class="small">No audio · Trigger threshold: 1</text>
+    <rect x="904" y="486" width="60" height="38" rx="10" fill="url(#accent)"/>
+    <rect x="978" y="486" width="60" height="38" rx="10" fill="url(#accent)"/>
+    <rect x="1052" y="486" width="75" height="38" rx="10" fill="url(#danger)"/>
+    <text x="934" y="510" text-anchor="middle" class="buttonText">Edit</text>
+    <text x="1008" y="510" text-anchor="middle" class="buttonText">Test</text>
+    <text x="1089.5" y="510" text-anchor="middle" class="buttonDanger">Delete</text>
+  </g>
+
+  <g>
+    <rect x="662" y="561" width="490" height="74" rx="10" fill="#292929" stroke="#343434"/>
+    <circle cx="709" cy="598" r="26" fill="#F0BA6A"/>
+    <path d="M693 595c7-10 26-10 33 0" stroke="#1D1D1D" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="700" cy="590" r="3" fill="#1D1D1D"/>
+    <circle cx="718" cy="590" r="3" fill="#1D1D1D"/>
+    <text x="756" y="592" class="heading" style="font-size:15px">PogU</text>
+    <text x="756" y="614" class="small">No audio · Trigger threshold: 3</text>
+    <rect x="904" y="579" width="60" height="38" rx="10" fill="url(#accent)"/>
+    <rect x="978" y="579" width="60" height="38" rx="10" fill="url(#accent)"/>
+    <rect x="1052" y="579" width="75" height="38" rx="10" fill="url(#danger)"/>
+    <text x="934" y="603" text-anchor="middle" class="buttonText">Edit</text>
+    <text x="1008" y="603" text-anchor="middle" class="buttonText">Test</text>
+    <text x="1089.5" y="603" text-anchor="middle" class="buttonDanger">Delete</text>
+  </g>
+
+  <g>
+    <rect x="662" y="654" width="490" height="58" rx="10" fill="#292929" stroke="#343434"/>
+    <circle cx="709" cy="683" r="22" fill="#DBD8D5"/>
+    <path d="M692 685c10 7 24 7 34 0" stroke="#1D1D1D" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="701" cy="678" r="2.5" fill="#1D1D1D"/>
+    <circle cx="717" cy="678" r="2.5" fill="#1D1D1D"/>
+    <text x="756" y="680" class="heading" style="font-size:15px">srjyPeepo</text>
+    <text x="756" y="700" class="small">No audio · Trigger threshold: 1</text>
+  </g>
+
+  <rect x="662" y="731" width="146" height="42" rx="10" transform="translate(0 -42)" fill="#E0B53D"/>
+  <text x="735" y="715" text-anchor="middle" class="buttonText">Clear saved data</text>
+</svg>

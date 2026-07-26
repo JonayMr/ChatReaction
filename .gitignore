@@ -1,6 +1,7 @@
 node_modules/
 dist/
 release/
+data/
 
 overlay-config.js
 
