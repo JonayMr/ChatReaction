@@ -4,7 +4,7 @@ ChatReaction is an Electron desktop app that lets you create custom stream react
 
 ## Interface Preview
 
-![ChatReaction interface preview](docs/interface-preview.svg)
+![ChatReaction interface preview](docs/interface-preview.png)
 
 ## Features
 
